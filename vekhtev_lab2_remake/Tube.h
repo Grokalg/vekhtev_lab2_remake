@@ -1,10 +1,12 @@
 #pragma once
+#include <string>
 #include <iostream>
 
 class tube
 {
 public:
 	int id = 0;
+	std::string name;
 	static int max_id;
 	double length = 0;
 	double diameter = 0;

@@ -130,7 +130,7 @@ int CorrectChoice()
 
 bool IsCorrectMenuChoice(int user_choice)
 {
-	if (cin.fail() || cin.peek() != '\n' || user_choice < 0 || user_choice > 9)
+	if (cin.fail() || cin.peek() != '\n' || user_choice < 0 || user_choice > 12)
 	{
 		cin.clear();
 		cin.ignore(1000, '\n');
@@ -214,12 +214,48 @@ cs& SelectCS(unordered_map <int, cs>& stations)
 	return stations[id];
 }
 
-vector<int> FindCsByName(unordered_map <int, cs> stations, string name)
+template <typename T>
+using Filter1 = bool(*)(cs new_cs, T param);
+
+bool CheckCSByName(cs new_cs, string param)
+{
+	return new_cs.name == param;
+}
+
+bool CheckByRooms(cs new_cs, int percent)
+{
+	return (1 - new_cs.active_rooms/new_cs.rooms)*100 >= percent;
+}
+
+template <typename T>
+vector<int> FindCsByFilter(unordered_map <int, cs> stations, Filter1<T> f, T param)
 {
 	vector <int> result;
 	for (auto& element : stations)
 	{
-		if (element.second.name == name)
+		if (f(element.second, param))
+		{
+			result.push_back(element.first);
+		}
+	}
+	return result;
+}
+
+template <typename T>
+using Filter2 = bool(*)(tube new_tube, T param);
+
+bool CheckTubeByName(tube new_tube, string param)
+{
+	return new_tube.name == param;
+}
+
+template <typename T>
+vector<int> FindTubesByFilter(unordered_map <int, tube> tubes, Filter2<T> f, T param)
+{
+	vector <int> result;
+	for (auto& element : tubes)
+	{
+		if (f(element.second, param))
 		{
 			result.push_back(element.first);
 		}
@@ -230,6 +266,8 @@ vector<int> FindCsByName(unordered_map <int, cs> stations, string name)
 void CreateTube(unordered_map <int, tube>& tubes)
 {
 	tube new_tube;
+	cout << "Введите название: ";
+	getline(cin >> ws, new_tube.name);
 	cout << "Введите длину в метрах (используйте <.>): ";
 	new_tube.length = UserInputParameter();
 	cout << "Введите диаметр в метрах (используйте <.>): ";
@@ -352,6 +390,7 @@ void Save(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations)
 			for (auto& element : tubes)
 			{
 				out << element.second.id << endl;
+				out << element.second.name << endl;
 				out << element.second.length << endl;
 				out << element.second.diameter << endl;
 				out << element.second.condition << endl;
@@ -393,6 +432,7 @@ void Download(unordered_map <int, tube>& tubes, unordered_map <int, cs>& station
 		while (number_of_tubes--)
 		{
 			in >> new_tube.id;
+			getline(in >> ws, new_tube.name);
 			in >> new_tube.length;
 			in >> new_tube.diameter;
 			in >> new_tube.condition;
@@ -420,15 +460,18 @@ void ShowMenu()
 	cout << "4. Просмотр всех объектов\n";
 	cout << "5. Редактировать трубу\n";
 	cout << "6. Редактировать КС\n";
-	cout << "7. Поиск КС по имени\n";
-	cout << "8. Сохранить\n";
-	cout << "9. Загрузить\n";
+	cout << "7. Поиск КС по названию\n";
+	cout << "8. Поиск КС по проценту незадействованных цехов\n";
+	cout << "9. Поиск труб по названию\n"; 
+	cout << "10. Поиск труб по признаку 'в ремонте'\n";
+	cout << "11. Сохранить\n";
+	cout << "12. Загрузить\n";
 	cout << "0. Выход\n";
 }
 
 int Menu(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations, vector<int>& indexes_of_stations)
 {
-	string name_of_station;
+	string name_of_object;
 	int user_choice;
 	do { cin >> user_choice; } while (IsCorrectMenuChoice(user_choice) == false);
 	switch (user_choice)
@@ -453,17 +496,36 @@ int Menu(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations, ve
 		return 1;
 	case 7:
 		cout << "Введите название: ";
-		cin >> name_of_station;
-		indexes_of_stations = FindCsByName(stations, name_of_station);
-		for (auto& element : indexes_of_stations)
+		cin >> name_of_object;
+		for (int element : FindCsByFilter(stations, CheckCSByName, name_of_object))
 		{
-			cout << element << endl;
+			cout << stations[element] << endl;
 		}
 		return 1;
 	case 8:
-		Save(tubes, stations);
+		int percent;
+		cout << "Введите процент: ";
+		cin >> percent;
+		for (int element : FindCsByFilter(stations, CheckByRooms, percent))
+		{
+			cout << stations[element] << endl;
+		}
 		return 1;
 	case 9:
+		cout << "Введите название: ";
+		cin >> name_of_object;
+		for (int element : FindTubesByFilter(tubes, CheckTubeByName, name_of_object))
+		{
+			cout << stations[element] << endl;
+		}
+		return 1;
+	case 10:
+
+		return 1;
+	case 11:
+		Save(tubes, stations);
+		return 1;
+	case 12:
 		Download(tubes, stations);
 		return 1;
 	case 0:
