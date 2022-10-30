@@ -16,21 +16,21 @@ void OutputArray(T mas)
 	}
 }
 
-template <typename T>
-int FindMaxId(T mas)
-{
-	int current_id;
-	int max_id = 1;
-	for (auto& element : mas)
-	{
-		current_id = element.first;
-		if (current_id > max_id)
-		{
-			max_id = current_id;
-		}
-	}
-	return max_id;
-}
+//template <typename T>
+//int FindMaxId(T mas)
+//{
+//	int current_id;
+//	int max_id = 1;
+//	for (auto& element : mas)
+//	{
+//		current_id = element.first;
+//		if (current_id > max_id)
+//		{
+//			max_id = current_id;
+//		}
+//	}
+//	return max_id;
+//}
 
 double UserInputParameter()
 {
@@ -48,16 +48,17 @@ double UserInputParameter()
 
 int UserInputIndex()
 {
-	int parameter;
-	cin >> parameter;
-	while (cin.fail() || cin.peek() != '\n' || parameter < 0)
+	int id;
+	cout << "¬ведите номер трубы, которую хотите удалить: ";
+	cin >> id;
+	while (cin.fail() || cin.peek() != '\n' || id < 0)
 	{
 		cout << "¬веденные данные не корректны\n";
 		cin.clear();
 		cin.ignore(1000, '\n');
-		cin >> parameter;
+		cin >> id;
 	}
-	return parameter;
+	return id;
 }
 
 int InputRooms()
@@ -168,29 +169,30 @@ bool IsPosibleTransformationSub(cs& new_cs)
 	}
 }
 
-double ReadValue(ifstream& in)
-{
-	double parameter = 0;
-	if (in.fail() || in.peek() != '\n')
-	{
-		in >> parameter;
-	}
-	return parameter;
-}
+//double ReadValue(ifstream& in)
+//{
+//	double parameter = 0;
+//	if (in.fail() || in.peek() != '\n')
+//	{
+//		in >> parameter;
+//	}
+//	return parameter;
+//}
 
-string ReadName(ifstream& in)
-{
-	string name;
-	if (in.fail() || in.peek() != '\n')
-	{
-		in >> name;
-	}
-	return name;
-}
+//string ReadName(ifstream& in)
+//{
+//	string name;
+//	if (in.fail() || in.peek() != '\n')
+//	{
+//		in >> name;
+//	}
+//	return name;
+//}
 
-int GetCorrectId(int min, int max)
+template <typename T>
+T GetCorrectNumber(T min, T max)
 {
-	int x;
+	T x;
 	while ((cin >> x).fail() || x > max || x < min)
 	{
 		cout << "¬веденные данные не корректны\n";
@@ -203,26 +205,27 @@ int GetCorrectId(int min, int max)
 tube& SelectTube(unordered_map <int, tube>& tubes)
 {
 	cout << "¬ведите номер трубы:" << endl;
-	int id = GetCorrectId(1, tubes.size());
+	int id = GetCorrectNumber<int>(1, tubes.size());
 	return tubes[id];
 }
 
 cs& SelectCS(unordered_map <int, cs>& stations)
 {
 	cout << "¬ведите номер трубы:" << endl;
-	int id = GetCorrectId(1, stations.size());
+	int id = GetCorrectNumber<int>(1, stations.size());
 	return stations[id];
 }
 
 template <typename T>
 using Filter1 = bool(*)(cs new_cs, T param);
 
-bool CheckCSByName(cs new_cs, string param)
+template <typename T>
+bool CheckByName(T object, string param)
 {
-	return new_cs.name == param;
+	return object.name == param;
 }
 
-bool CheckByRooms(cs new_cs, int percent)
+bool CheckByRooms(cs new_cs, double percent)
 {
 	return (1 - new_cs.active_rooms/new_cs.rooms)*100 >= percent;
 }
@@ -244,9 +247,9 @@ vector<int> FindCsByFilter(unordered_map <int, cs> stations, Filter1<T> f, T par
 template <typename T>
 using Filter2 = bool(*)(tube new_tube, T param);
 
-bool CheckTubeByName(tube new_tube, string param)
+bool CheckByStatus(tube new_tube, int status)
 {
-	return new_tube.name == param;
+	return new_tube.condition == status;
 }
 
 template <typename T>
@@ -374,13 +377,15 @@ void EditStation(cs& new_cs)
 
 void Save(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations)
 {
+	tube new_tube; 
+	cs new_cs;
 	ofstream out("Data.txt");
 	if (out.is_open())
 	{
 		out << tubes.size() << endl;
-		out << FindMaxId(tubes) << endl;
+		out << new_tube.max_id << endl;
 		out << stations.size() << endl;
-		out << FindMaxId(stations) << endl;
+		out << new_cs.max_id << endl;
 		if (tubes.empty())
 		{
 			cout << "“рубы еще не созданы\n";
@@ -419,18 +424,18 @@ void Save(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations)
 
 void Download(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations)
 {
-	tube new_tube;
-	cs new_cs;
-	int number_of_tubes, number_of_cs;
+	int number_of_tubes, number_of_cs, cs_max_id, tube_max_id;
 	ifstream in("Data.txt");
 	if (in.is_open())
 	{
 		in >> number_of_tubes;
-		in >> new_tube.max_id;
+		in >> tube_max_id;
 		in >> number_of_cs;
-		in >> new_cs.max_id;
+		in >> cs_max_id;
 		while (number_of_tubes--)
 		{
+			tube new_tube;
+			new_tube.max_id =+ tube_max_id + 1;
 			in >> new_tube.id;
 			getline(in >> ws, new_tube.name);
 			in >> new_tube.length;
@@ -440,6 +445,8 @@ void Download(unordered_map <int, tube>& tubes, unordered_map <int, cs>& station
 		}
 		while (number_of_cs--)
 		{
+			cs new_cs;
+			new_cs.max_id =+ cs_max_id + 1;
 			in >> new_cs.id;
 			getline(in >> ws, new_cs.name);
 			in >> new_cs.rooms;
@@ -496,16 +503,16 @@ int Menu(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations, ve
 		return 1;
 	case 7:
 		cout << "¬ведите название: ";
-		cin >> name_of_object;
-		for (int element : FindCsByFilter(stations, CheckCSByName, name_of_object))
+		getline(cin >> ws, name_of_object);
+		for (int element : FindCsByFilter(stations, CheckByName, name_of_object))
 		{
 			cout << stations[element] << endl;
 		}
 		return 1;
 	case 8:
-		int percent;
+		double percent;
 		cout << "¬ведите процент: ";
-		cin >> percent;
+		percent = GetCorrectNumber<double>(0, 100);
 		for (int element : FindCsByFilter(stations, CheckByRooms, percent))
 		{
 			cout << stations[element] << endl;
@@ -513,14 +520,21 @@ int Menu(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations, ve
 		return 1;
 	case 9:
 		cout << "¬ведите название: ";
-		cin >> name_of_object;
-		for (int element : FindTubesByFilter(tubes, CheckTubeByName, name_of_object))
+		getline(cin >> ws, name_of_object);
+		for (int element : FindTubesByFilter(tubes, CheckByName, name_of_object))
 		{
-			cout << stations[element] << endl;
+			cout << tubes[element] << endl;
 		}
 		return 1;
 	case 10:
-
+		int status;
+		cout << "<0> - вывести трубы, которые в ремонте" << endl
+			<< "<1> - вывести исправные трубы" << endl;
+		status = GetCorrectNumber<int>(0, 1);
+		for (int element : FindTubesByFilter(tubes, CheckByStatus, status))
+		{
+			cout << tubes[element] << endl;
+		}
 		return 1;
 	case 11:
 		Save(tubes, stations);
