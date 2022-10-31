@@ -13,6 +13,7 @@ public:
 	int efficiency = 0;
 
 	cs();
+	//~cs();
 	friend std::ostream& operator << (std::ostream& out, const cs& new_cs);
 };
 

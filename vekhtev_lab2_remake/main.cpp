@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <algorithm>    // std::find
 #include "Tube.h"
 #include "CS.h"
 
@@ -275,6 +276,12 @@ void OutputObjects(vector<int> v, unordered_map <int, T> mas)
 	}
 }
 
+tube Change(tube t, int status)
+{
+	t.condition = status;
+	return t;
+}
+
 void CreateTube(unordered_map <int, tube>& tubes)
 {
 	tube new_tube;
@@ -355,6 +362,47 @@ void EditTube(tube& new_tube)
 	}
 }
 
+void EditTubes(unordered_map <int, tube>& tubes)
+{
+	int id;
+	int status = 0;
+	vector<int> id_of_tubes;
+	cout << "------------ Редактирование Труб ------------\n";
+	while (true)
+	{
+		cout << "Введите номер трубы, которую вы хотите добавить в редактирование: " << endl
+			<< "Для прекращения ввода, введите 0" << endl;
+		cin >> id;
+		if (id == 0)
+		{
+			break;
+		}
+		if (tubes.find(id) != tubes.end() and find(id_of_tubes.begin(), id_of_tubes.end(), id) == id_of_tubes.end())
+		{
+			id_of_tubes.push_back(id);
+			continue;
+		}
+	}
+	cout << "Введите значение состояния, которое будет применено для выбранных труб:\n";
+	cout << "<1> - Труба исправна  <0> - Труба в ремонте\n";
+	switch (GetCorrectNumber<int>(0, 1))
+	{
+	case 1:
+		status = 1;
+		break;
+	case 0:
+		status = 0;
+		break;
+	default:
+		cout << "Введенные данные не корректны.\n";
+		break;
+	}
+	for (int i : id_of_tubes)
+	{
+		tubes[i] = Change(tubes[i], status);
+	}
+}
+
 void EditStation(cs& new_cs)
 {
 	if (new_cs.rooms == 0)
@@ -393,6 +441,8 @@ void Save(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations)
 	tube new_tube; 
 	cs new_cs;
 	ofstream out("Data.txt");
+	new_tube.max_id = new_tube.max_id - 1;
+	new_cs.max_id = new_cs.max_id - 1;
 	if (out.is_open())
 	{
 		out << tubes.size() << endl;
@@ -448,7 +498,7 @@ void Download(unordered_map <int, tube>& tubes, unordered_map <int, cs>& station
 		while (number_of_tubes--)
 		{
 			tube new_tube;
-			new_tube.max_id =+ tube_max_id + 1;
+			new_tube.max_id = tube_max_id;
 			in >> new_tube.id;
 			getline(in >> ws, new_tube.name);
 			in >> new_tube.length;
@@ -459,7 +509,7 @@ void Download(unordered_map <int, tube>& tubes, unordered_map <int, cs>& station
 		while (number_of_cs--)
 		{
 			cs new_cs;
-			new_cs.max_id =+ cs_max_id + 1;
+			new_cs.max_id = cs_max_id;
 			in >> new_cs.id;
 			getline(in >> ws, new_cs.name);
 			in >> new_cs.rooms;
@@ -511,7 +561,8 @@ int Menu(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations, ve
 		ViewAllObjects(tubes, stations);
 		return 1;
 	case 5:
-		EditTube(SelectTube(tubes));
+		/*EditTube(SelectTube(tubes));*/
+		EditTubes(tubes);
 		return 1;
 	case 6:
 		EditStation(SelectCS(stations));

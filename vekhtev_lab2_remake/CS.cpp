@@ -6,7 +6,8 @@ int cs::max_id = 1;
 
 ostream& operator << (ostream& out, const cs& new_cs)
 {
-	out << "Название: " << new_cs.name << endl
+	out << "max_id" << new_cs.max_id << endl
+		<< "Название: " << new_cs.name << endl
 		<< "Всего цехов: " << new_cs.rooms << endl
 		<< "Цехи в работе: " << new_cs.active_rooms << endl
 		<< "Эффективность: " << new_cs.efficiency << "\n\n";
@@ -15,5 +16,12 @@ ostream& operator << (ostream& out, const cs& new_cs)
 
 cs::cs()
 {
+	cout << "cs::cs()";
 	id = max_id++;
 }
+
+//cs::~cs()
+//{
+//	cout << "cs::~cs()";
+//	max_id = 1;
+//}
