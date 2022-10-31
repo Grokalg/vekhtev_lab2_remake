@@ -282,6 +282,26 @@ tube Change(tube t, int status)
 	return t;
 }
 
+void SetStatus(unordered_map <int, tube>& tubes, vector<int> v)
+{
+	int status = 0;
+	cout << "Введите значение состояния, которое будет применено для выбранных труб:\n";
+	cout << "<1> - Труба исправна  <0> - Труба в ремонте\n";
+	switch (GetCorrectNumber<int>(0, 1))
+	{
+	case 1:
+		status = 1;
+		break;
+	case 0:
+		status = 0;
+		break;
+	}
+	for (int i : v)
+	{
+		tubes[i] = Change(tubes[i], status);
+	}
+}
+
 void CreateTube(unordered_map <int, tube>& tubes)
 {
 	tube new_tube;
@@ -336,70 +356,77 @@ void ViewAllObjects(unordered_map <int, tube> tubes, unordered_map <int, cs> sta
 	}
 }
 
-void EditTube(tube& new_tube)
+//void EditTube(tube& new_tube)
+//{
+//	if (new_tube.length == 0)
+//	{
+//		cout << "Труба еще не создана\n";
+//	}
+//	else
+//	{
+//		cout << "------------ Редактирование Трубы ------------\n";
+//		cout << "Введите значение состояния:\n";
+//		cout << "<1> - Труба исправна  <0> - Труба в ремонте\n";
+//		switch (GetCorrectNumber<int>(0,1))
+//		{
+//		case 1:
+//			new_tube.condition = 1;
+//			break;
+//		case 0:
+//			new_tube.condition = 0;
+//			break;
+//		default:
+//			cout << "Введенные данные не корректны.\n";
+//			break;
+//		}
+//	}
+//}
+
+void EditTubes(unordered_map <int, tube>& tubes, vector<int> id_of_tubes)
 {
-	if (new_tube.length == 0)
+	int id;
+	vector<int> indexes_of_tubes;
+	cout << "------------ Редактирование Труб ------------\n";
+	cout << "Выберите 1, если хотите редактировать трубы из фильтра" << endl
+		<< "          2, если хотите редактировать трубы среди всех созданных" << endl;
+	if (GetCorrectNumber(1, 2) == 1)
 	{
-		cout << "Труба еще не создана\n";
+		SetStatus(tubes, id_of_tubes);
 	}
 	else
 	{
-		cout << "------------ Редактирование Трубы ------------\n";
-		cout << "Введите значение состояния:\n";
-		cout << "<1> - Труба исправна  <0> - Труба в ремонте\n";
-		switch (GetCorrectNumber<int>(0,1))
+		while (true)
 		{
-		case 1:
-			new_tube.condition = 1;
-			break;
-		case 0:
-			new_tube.condition = 0;
-			break;
-		default:
-			cout << "Введенные данные не корректны.\n";
-			break;
+			cout << "Введите номер трубы, которую вы хотите добавить в редактирование: " << endl
+				<< "Для прекращения ввода, введите 0" << endl;
+			cin >> id;
+			if (id == 0)
+			{
+				break;
+			}
+			if (tubes.find(id) != tubes.end() and find(indexes_of_tubes.begin(), indexes_of_tubes.end(), id) == indexes_of_tubes.end())
+			{
+				indexes_of_tubes.push_back(id);
+				continue;
+			}
 		}
+		SetStatus(tubes, indexes_of_tubes);
 	}
 }
 
-void EditTubes(unordered_map <int, tube>& tubes)
+void EditStations(unordered_map <int, cs>& stations, vector<int> id_of_stations)
 {
-	int id;
-	int status = 0;
-	vector<int> id_of_tubes;
-	cout << "------------ Редактирование Труб ------------\n";
-	while (true)
+	vector<int> indexes_of_stations;
+	cout << "------------ Редактирование КС ------------\n";
+	cout << "Выберите 1, если хотите редактировать КС из фильтра" << endl
+		<< "          2, если хотите редактировать КС среди всех созданных" << endl;
+	if (GetCorrectNumber(1, 2) == 1)
 	{
-		cout << "Введите номер трубы, которую вы хотите добавить в редактирование: " << endl
-			<< "Для прекращения ввода, введите 0" << endl;
-		cin >> id;
-		if (id == 0)
-		{
-			break;
-		}
-		if (tubes.find(id) != tubes.end() and find(id_of_tubes.begin(), id_of_tubes.end(), id) == id_of_tubes.end())
-		{
-			id_of_tubes.push_back(id);
-			continue;
-		}
+		
 	}
-	cout << "Введите значение состояния, которое будет применено для выбранных труб:\n";
-	cout << "<1> - Труба исправна  <0> - Труба в ремонте\n";
-	switch (GetCorrectNumber<int>(0, 1))
+	else
 	{
-	case 1:
-		status = 1;
-		break;
-	case 0:
-		status = 0;
-		break;
-	default:
-		cout << "Введенные данные не корректны.\n";
-		break;
-	}
-	for (int i : id_of_tubes)
-	{
-		tubes[i] = Change(tubes[i], status);
+		
 	}
 }
 
@@ -528,8 +555,8 @@ void ShowMenu()
 	cout << "2. Добавить КС\n";
 	cout << "3. Удалить трубу\n";
 	cout << "4. Просмотр всех объектов\n";
-	cout << "5. Редактировать трубу\n";
-	cout << "6. Редактировать КС\n";
+	cout << "5. Редактирование труб\n";
+	cout << "6. Редактирование КС\n";
 	cout << "7. Поиск КС по названию\n";
 	cout << "8. Поиск КС по проценту незадействованных цехов\n";
 	cout << "9. Поиск труб по названию\n"; 
@@ -539,7 +566,7 @@ void ShowMenu()
 	cout << "0. Выход\n";
 }
 
-int Menu(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations, vector<int>& indexes_of_stations, vector<int>& indexes_of_tubes)
+int Menu(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations, vector<int>& id_of_stations, vector<int>& id_of_tubes)
 {
 	string name_of_object;
 	int user_choice;
@@ -562,7 +589,7 @@ int Menu(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations, ve
 		return 1;
 	case 5:
 		/*EditTube(SelectTube(tubes));*/
-		EditTubes(tubes);
+		EditTubes(tubes, id_of_tubes);
 		return 1;
 	case 6:
 		EditStation(SelectCS(stations));
@@ -570,29 +597,25 @@ int Menu(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations, ve
 	case 7:
 		cout << "Введите название: ";
 		getline(cin >> ws, name_of_object);
-		indexes_of_stations = FindCsByFilter(stations, CheckByName, name_of_object);
-		OutputObjects(indexes_of_stations, stations);
+		id_of_stations = FindCsByFilter(stations, CheckByName, name_of_object);
+		OutputObjects(id_of_stations, stations);
 		return 1;
 	case 8:
-		double percent;
 		cout << "Введите процент: ";
-		percent = GetCorrectNumber<double>(0, 100);
-		indexes_of_stations = FindCsByFilter(stations, CheckByRooms, percent);
-		OutputObjects(indexes_of_stations, stations);
+		id_of_stations = FindCsByFilter(stations, CheckByRooms, GetCorrectNumber<double>(0, 100));
+		OutputObjects(id_of_stations, stations);
 		return 1;
 	case 9:
 		cout << "Введите название: ";
 		getline(cin >> ws, name_of_object);
-		indexes_of_tubes = FindTubesByFilter(tubes, CheckByName, name_of_object);
-		OutputObjects(indexes_of_tubes, tubes);
+		id_of_tubes = FindTubesByFilter(tubes, CheckByName, name_of_object);
+		OutputObjects(id_of_tubes, tubes);
 		return 1;
 	case 10:
-		int status;
 		cout << "<0> - вывести трубы, которые в ремонте" << endl
 			<< "<1> - вывести исправные трубы" << endl;
-		status = GetCorrectNumber<int>(0, 1);
-		indexes_of_tubes = FindTubesByFilter(tubes, CheckByStatus, status);
-		OutputObjects(indexes_of_tubes, tubes);
+		id_of_tubes = FindTubesByFilter(tubes, CheckByStatus, GetCorrectNumber<int>(0, 1));
+		OutputObjects(id_of_tubes, tubes);
 		return 1;
 	case 11:
 		Save(tubes, stations);
@@ -611,9 +634,9 @@ int Menu(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations, ve
 int main()
 {
 	setlocale(0, "");
-	vector<int> indexes_of_stations;
-	vector<int> indexes_of_tubes;
+	vector<int> id_of_stations;
+	vector<int> id_of_tubes;
 	unordered_map <int, tube> tubes;
 	unordered_map <int, cs> stations;
-	do { ShowMenu(); } while (Menu(tubes, stations, indexes_of_stations, indexes_of_tubes) != 0);
+	do { ShowMenu(); } while (Menu(tubes, stations, id_of_stations, id_of_tubes) != 0);
 }

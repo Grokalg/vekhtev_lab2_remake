@@ -16,7 +16,6 @@ ostream& operator << (ostream& out, const cs& new_cs)
 
 cs::cs()
 {
-	cout << "cs::cs()";
 	id = max_id++;
 }
 
