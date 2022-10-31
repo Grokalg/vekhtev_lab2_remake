@@ -32,102 +32,102 @@ void OutputArray(T mas)
 //	return max_id;
 //}
 
-double UserInputParameter()
-{
-	double parameter;
-	cin >> parameter;
-	while (cin.fail() || cin.peek() != '\n' || parameter <= 0)
-	{
-		cout << "Введенные данные не корректны\n";
-		cin.clear();
-		cin.ignore(1000, '\n');
-		cin >> parameter;
-	}
-	return parameter;
-}
+//double UserInputParameter()
+//{
+//	double parameter;
+//	cin >> parameter;
+//	while (cin.fail() || cin.peek() != '\n' || parameter <= 0)
+//	{
+//		cout << "Введенные данные не корректны\n";
+//		cin.clear();
+//		cin.ignore(1000, '\n');
+//		cin >> parameter;
+//	}
+//	return parameter;
+//}
 
-int UserInputIndex()
-{
-	int id;
-	cout << "Введите номер трубы, которую хотите удалить: ";
-	cin >> id;
-	while (cin.fail() || cin.peek() != '\n' || id < 0)
-	{
-		cout << "Введенные данные не корректны\n";
-		cin.clear();
-		cin.ignore(1000, '\n');
-		cin >> id;
-	}
-	return id;
-}
+//int UserInputIndex()
+//{
+//	int id;
+//	cout << "Введите номер трубы, которую хотите удалить: ";
+//	cin >> id;
+//	while (cin.fail() || cin.peek() != '\n' || id < 0)
+//	{
+//		cout << "Введенные данные не корректны\n";
+//		cin.clear();
+//		cin.ignore(1000, '\n');
+//		cin >> id;
+//	}
+//	return id;
+//}
 
-int InputRooms()
-{
-	int rooms;
-	cin >> rooms;
-	while (cin.fail() || cin.peek() != '\n' || rooms <= 0)
-	{
-		cout << "Введенные данные не корректны\n";
-		cin.clear();
-		cin.ignore(1000, '\n');
-		cin >> rooms;
-	}
-	return rooms;
-}
+//int InputRooms()
+//{
+//	int rooms;
+//	cin >> rooms;
+//	while (cin.fail() || cin.peek() != '\n' || rooms <= 0)
+//	{
+//		cout << "Введенные данные не корректны\n";
+//		cin.clear();
+//		cin.ignore(1000, '\n');
+//		cin >> rooms;
+//	}
+//	return rooms;
+//}
 
-string InputName()
-{
-	string name;
-	cin >> name;
-	while (cin.fail() || cin.peek() != '\n')
-	{
-		cout << "Введенные данные не корректны\n";
-		cin.clear();
-		cin.ignore(1000, '\n');
-		cin >> name;
-	}
-	return name;
-}
+//string InputName()
+//{
+//	string name;
+//	cin >> name;
+//	while (cin.fail() || cin.peek() != '\n')
+//	{
+//		cout << "Введенные данные не корректны\n";
+//		cin.clear();
+//		cin.ignore(1000, '\n');
+//		cin >> name;
+//	}
+//	return name;
+//}
 
-int InputActiveRooms(cs& new_cs)
-{
-	int active_rooms;
-	cin >> active_rooms;
-	while (cin.fail() || cin.peek() != '\n' || active_rooms > new_cs.rooms || active_rooms < 0)
-	{
-		cout << "Введенные данные не корректны\n";
-		cin.clear();
-		cin.ignore(1000, '\n');
-		cin >> active_rooms;
-	}
-	return active_rooms;
-}
+//int InputActiveRooms(cs& new_cs)
+//{
+//	int active_rooms;
+//	cin >> active_rooms;
+//	while (cin.fail() || cin.peek() != '\n' || active_rooms > new_cs.rooms || active_rooms < 0)
+//	{
+//		cout << "Введенные данные не корректны\n";
+//		cin.clear();
+//		cin.ignore(1000, '\n');
+//		cin >> active_rooms;
+//	}
+//	return active_rooms;
+//}
 
-int InputEfficiency()
-{
-	int efficiency;
-	cin >> efficiency;
-	while (cin.fail() || cin.peek() != '\n' || efficiency <= 0 || efficiency > 5)
-	{
-		cout << "Введенные данные не корректны\n";
-		cin.clear();
-		cin.ignore(1000, '\n');
-		cin >> efficiency;
-	}
-	return efficiency;
-}
+//int InputEfficiency()
+//{
+//	int efficiency;
+//	cin >> efficiency;
+//	while (cin.fail() || cin.peek() != '\n' || efficiency <= 0 || efficiency > 5)
+//	{
+//		cout << "Введенные данные не корректны\n";
+//		cin.clear();
+//		cin.ignore(1000, '\n');
+//		cin >> efficiency;
+//	}
+//	return efficiency;
+//}
 
-int CorrectChoice()
-{
-	int user_choice;
-	do
-	{
-		cin.clear();
-		cin.ignore(1000, '\n');
-		cin >> user_choice;
-	} while (cin.fail() || user_choice < 0 || user_choice > 1);
-	return user_choice;
-}
+//int CorrectChoice()
+//{
+//	int user_choice;
+//	do
+//	{
+//		cin.clear();
+//		cin.ignore(1000, '\n');
+//		cin >> user_choice;
+//	} while (cin.fail() || user_choice < 0 || user_choice > 1);
+//	return user_choice;
+//}
 
 bool IsCorrectMenuChoice(int user_choice)
 {
@@ -266,15 +266,25 @@ vector<int> FindTubesByFilter(unordered_map <int, tube> tubes, Filter2<T> f, T p
 	return result;
 }
 
+template <typename T>
+void OutputObjects(vector<int> v, unordered_map <int, T> mas)
+{
+	for (int element : v)
+	{
+		cout << mas[element] << endl;
+	}
+}
+
 void CreateTube(unordered_map <int, tube>& tubes)
 {
 	tube new_tube;
 	cout << "Введите название: ";
 	getline(cin >> ws, new_tube.name);
 	cout << "Введите длину в метрах (используйте <.>): ";
-	new_tube.length = UserInputParameter();
+	/*new_tube.length = UserInputParameter();*/
+	new_tube.length = GetCorrectNumber<double>(1, 100000);
 	cout << "Введите диаметр в метрах (используйте <.>): ";
-	new_tube.diameter = UserInputParameter();
+	new_tube.diameter = GetCorrectNumber<double>(1, 100000);;
 	cout << "Труба исправна\n\n";
 	new_tube.condition = 1;
 	tubes.emplace(new_tube.id, new_tube);
@@ -286,11 +296,14 @@ void CreateStation(unordered_map <int, cs>& stations)
 	cout << "Введите название: ";
 	getline(cin >> ws, new_cs.name);
 	cout << "Укажите количество цехов: ";
-	new_cs.rooms = InputRooms();
+	/*new_cs.rooms = InputRooms();*/
+	new_cs.rooms = GetCorrectNumber<int>(1, 10000);
 	cout << "Укажите количество работающих цехов: ";
-	new_cs.active_rooms = InputActiveRooms(new_cs);
+	//new_cs.active_rooms = InputActiveRooms(new_cs);
+	new_cs.active_rooms = GetCorrectNumber<int>(0, new_cs.rooms);
 	cout << "Введите значение эффективности (от 1 до 5): ";
-	new_cs.efficiency = InputEfficiency();
+	/*new_cs.efficiency = InputEfficiency();*/
+	new_cs.efficiency = GetCorrectNumber<int>(1, 5);
 	stations.emplace(new_cs.id, new_cs);
 }
 
@@ -327,7 +340,7 @@ void EditTube(tube& new_tube)
 		cout << "------------ Редактирование Трубы ------------\n";
 		cout << "Введите значение состояния:\n";
 		cout << "<1> - Труба исправна  <0> - Труба в ремонте\n";
-		switch (CorrectChoice())
+		switch (GetCorrectNumber<int>(0,1))
 		{
 		case 1:
 			new_tube.condition = 1;
@@ -353,7 +366,7 @@ void EditStation(cs& new_cs)
 		cout << "------------ Редактирование КС ------------\n";
 		cout << "Количество работающих цехов на данный момент: " << new_cs.active_rooms << endl;
 		cout << "<0> - Убрать активный цех, <1> - Добавить активный цех\n";
-		switch (CorrectChoice())
+		switch (GetCorrectNumber<int>(0, 1))
 		{
 		case 1:
 			if (IsPosibleTransformationAdd(new_cs))
@@ -476,7 +489,7 @@ void ShowMenu()
 	cout << "0. Выход\n";
 }
 
-int Menu(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations, vector<int>& indexes_of_stations)
+int Menu(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations, vector<int>& indexes_of_stations, vector<int>& indexes_of_tubes)
 {
 	string name_of_object;
 	int user_choice;
@@ -490,7 +503,9 @@ int Menu(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations, ve
 		CreateStation(stations);
 		return 1;
 	case 3:
-		tubes.erase(UserInputIndex());
+		cout << "Введите номер трубы, которую хотите удалить: ";
+		/*tubes.erase(UserInputIndex());*/
+		tubes.erase(GetCorrectNumber<int>(0, 100000));
 		return 1;
 	case 4:
 		ViewAllObjects(tubes, stations);
@@ -504,37 +519,29 @@ int Menu(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations, ve
 	case 7:
 		cout << "Введите название: ";
 		getline(cin >> ws, name_of_object);
-		for (int element : FindCsByFilter(stations, CheckByName, name_of_object))
-		{
-			cout << stations[element] << endl;
-		}
+		indexes_of_stations = FindCsByFilter(stations, CheckByName, name_of_object);
+		OutputObjects(indexes_of_stations, stations);
 		return 1;
 	case 8:
 		double percent;
 		cout << "Введите процент: ";
 		percent = GetCorrectNumber<double>(0, 100);
-		for (int element : FindCsByFilter(stations, CheckByRooms, percent))
-		{
-			cout << stations[element] << endl;
-		}
+		indexes_of_stations = FindCsByFilter(stations, CheckByRooms, percent);
+		OutputObjects(indexes_of_stations, stations);
 		return 1;
 	case 9:
 		cout << "Введите название: ";
 		getline(cin >> ws, name_of_object);
-		for (int element : FindTubesByFilter(tubes, CheckByName, name_of_object))
-		{
-			cout << tubes[element] << endl;
-		}
+		indexes_of_tubes = FindTubesByFilter(tubes, CheckByName, name_of_object);
+		OutputObjects(indexes_of_tubes, tubes);
 		return 1;
 	case 10:
 		int status;
 		cout << "<0> - вывести трубы, которые в ремонте" << endl
 			<< "<1> - вывести исправные трубы" << endl;
 		status = GetCorrectNumber<int>(0, 1);
-		for (int element : FindTubesByFilter(tubes, CheckByStatus, status))
-		{
-			cout << tubes[element] << endl;
-		}
+		indexes_of_tubes = FindTubesByFilter(tubes, CheckByStatus, status);
+		OutputObjects(indexes_of_tubes, tubes);
 		return 1;
 	case 11:
 		Save(tubes, stations);
@@ -554,7 +561,8 @@ int main()
 {
 	setlocale(0, "");
 	vector<int> indexes_of_stations;
+	vector<int> indexes_of_tubes;
 	unordered_map <int, tube> tubes;
 	unordered_map <int, cs> stations;
-	do { ShowMenu(); } while (Menu(tubes, stations, indexes_of_stations) != 0);
+	do { ShowMenu(); } while (Menu(tubes, stations, indexes_of_stations, indexes_of_tubes) != 0);
 }
