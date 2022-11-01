@@ -169,6 +169,75 @@ void SetStatus(unordered_map <int, tube>& tubes, vector<int> v)
 	}
 }
 
+cs AddRoom(cs c)
+{
+	c.active_rooms++;
+	return c;
+}
+
+cs SubRoom(cs c)
+{
+	c.active_rooms--;
+	return c;
+}
+
+void ChangeCsParameter(vector<int> v, unordered_map <int, cs>& stations)
+{
+	int error_flag = 1;
+	cout << "Выберите оперцию, которую необходимо выполнить: " << endl;
+	cout << "<0> - Убрать активный цех, <1> - Добавить активный цех\n";
+	if (GetCorrectNumber<int>(0, 1) == 0)
+	{
+		for (int i : v)
+		{
+			if (IsPosibleTransformationSub(stations[i]))
+			{
+				error_flag = 1;
+			}
+			else
+			{
+				error_flag = 0;
+			}
+		}
+		if (error_flag == 1)
+		{
+			for (int i : v)
+			{
+				stations[i] = SubRoom(stations[i]);
+			}
+		}
+		else
+		{
+			cout << "Операция не может быть выполнена" << endl;
+		}
+	}
+	else
+	{
+		for (int i : v)
+		{
+			if (IsPosibleTransformationAdd(stations[i]))
+			{
+				error_flag = 1;
+			}
+			else
+			{
+				error_flag = 0;
+			}
+		}
+		if (error_flag == 1)
+		{
+			for (int i : v)
+			{
+				stations[i] = AddRoom(stations[i]);
+			}
+		}
+		else
+		{
+			cout << "Операция не может быть выполнена" << endl;
+		}
+	}
+}
+
 void CreateTube(unordered_map <int, tube>& tubes)
 {
 	tube new_tube;
@@ -257,52 +326,68 @@ void EditTubes(unordered_map <int, tube>& tubes, vector<int> id_of_tubes)
 
 void EditStations(unordered_map <int, cs>& stations, vector<int> id_of_stations)
 {
-	vector<int> indexes_of_stations;
 	cout << "------------ Редактирование КС ------------\n";
 	cout << "Выберите 1, если хотите редактировать КС из фильтра" << endl
 		<< "          2, если хотите редактировать КС среди всех созданных" << endl;
 	if (GetCorrectNumber(1, 2) == 1)
 	{
-		
+		ChangeCsParameter(id_of_stations, stations);
 	}
 	else
 	{
-		
+		int id;
+		vector<int> indexes_of_stations;
+		while (true)
+		{
+			cout << "Введите номер КС, которую вы хотите добавить в редактирование: " << endl
+				<< "Для прекращения ввода, введите 0" << endl;
+			cin >> id;
+			if (id == 0)
+			{
+				break;
+			}
+			if (stations.find(id) != stations.end() and find(indexes_of_stations.begin(), indexes_of_stations.end(), id) == indexes_of_stations.end())
+			{
+				indexes_of_stations.push_back(id);
+				continue;
+			}
+		}
+		ChangeCsParameter(indexes_of_stations, stations);
 	}
 }
 
-void EditStation(cs& new_cs)
-{
-	if (new_cs.rooms == 0)
-	{
-		cout << "КС еще не создана\n";
-	}
-	else
-	{
-		cout << "------------ Редактирование КС ------------\n";
-		cout << "Количество работающих цехов на данный момент: " << new_cs.active_rooms << endl;
-		cout << "<0> - Убрать активный цех, <1> - Добавить активный цех\n";
-		switch (GetCorrectNumber<int>(0, 1))
-		{
-		case 1:
-			if (IsPosibleTransformationAdd(new_cs))
-			{
-				new_cs.active_rooms++;
-				cout << "Кол-во работающих цехов: " << new_cs.active_rooms << endl;
-			}
-			break;
-		case 0:
-			if (IsPosibleTransformationSub(new_cs))
-			{
-				new_cs.active_rooms--;
-				cout << "Кол-во работающих цехов: " << new_cs.active_rooms << endl;
-			}
-			break;
-		default:
-			break;
-		}
-	}
-}
+//void EditStation(cs& new_cs)
+//{
+//	if (new_cs.rooms == 0)
+//	{
+//		cout << "КС еще не создана\n";
+//	}
+//	else
+//	{
+//		cout << "------------ Редактирование КС ------------\n";
+//		cout << "Количество работающих цехов на данный момент: " << new_cs.active_rooms << endl;
+//		cout << "<0> - Убрать активный цех, <1> - Добавить активный цех\n";
+//		switch (GetCorrectNumber<int>(0, 1))
+//		{
+//		case 1:
+//			if (IsPosibleTransformationAdd(new_cs))
+//			{
+//				new_cs.active_rooms++;
+//				cout << "Кол-во работающих цехов: " << new_cs.active_rooms << endl;
+//			}
+//			break;
+//		case 0:
+//			if (IsPosibleTransformationSub(new_cs))
+//			{
+//				new_cs.active_rooms--;
+//				cout << "Кол-во работающих цехов: " << new_cs.active_rooms << endl;
+//			}
+//			break;
+//		default:
+//			break;
+//		}
+//	}
+//}
 
 void Save(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations)
 {
@@ -431,7 +516,8 @@ int Menu(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations, ve
 		EditTubes(tubes, id_of_tubes);
 		return 1;
 	case 6:
-		EditStation(SelectCS(stations));
+		EditStations(stations, id_of_stations);
+		/*EditStation(SelectCS(stations));*/
 		return 1;
 	case 7:
 		cout << "Введите название: ";
