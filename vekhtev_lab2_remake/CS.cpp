@@ -18,6 +18,15 @@ cs::cs()
 	id = max_id++;
 }
 
+//int cs::GetId()
+//{
+//	return id;
+//}
+
+//void cs::SetId(int index)
+//{
+//	id = index;
+//}
 //cs::~cs()
 //{
 //	cout << "cs::~cs()";

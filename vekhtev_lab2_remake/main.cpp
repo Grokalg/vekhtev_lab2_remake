@@ -393,7 +393,10 @@ void Save(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations)
 {
 	tube new_tube; 
 	cs new_cs;
-	ofstream out("Data.txt");
+	string name_of_file;
+	cout << "¬ведите название файла, в который нужно сохранить данные: ";
+	getline(cin >> ws, name_of_file);
+	ofstream out(name_of_file + ".txt");
 	new_tube.max_id = new_tube.max_id - 1;
 	new_cs.max_id = new_cs.max_id - 1;
 	if (out.is_open())
@@ -441,7 +444,10 @@ void Save(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations)
 void Download(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations)
 {
 	int number_of_tubes, number_of_cs, cs_max_id, tube_max_id;
-	ifstream in("Data.txt");
+	string name_of_file;
+	cout << "¬ведите название файла, из которого нужно считать данные: ";
+	getline(cin >> ws, name_of_file);
+	ifstream in(name_of_file + ".txt");
 	if (in.is_open())
 	{
 		in >> number_of_tubes;
