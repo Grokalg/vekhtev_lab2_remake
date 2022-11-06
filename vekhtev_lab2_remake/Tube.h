@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <iostream>
+#include "utils.h"
 
 class tube
 {
@@ -14,5 +15,6 @@ public:
 
 	tube();
 	friend std::ostream& operator << (std::ostream& out, const tube& new_tube);
+	friend std::istream& operator >> (std::istream& in, tube& new_tube);
 };
 

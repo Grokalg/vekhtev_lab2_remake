@@ -5,6 +5,7 @@
 #include <algorithm>    // std::find
 #include "Tube.h"
 #include "CS.h"
+#include "utils.h"
 
 using namespace std;
 
@@ -15,18 +16,6 @@ void OutputArray(T mas)
 	{
 		cout << element.first << endl << element.second << endl;
 	}
-}
-
-bool IsCorrectMenuChoice(int user_choice)
-{
-	if (cin.fail() || cin.peek() != '\n' || user_choice < 0 || user_choice > 12)
-	{
-		cin.clear();
-		cin.ignore(1000, '\n');
-		cout << "Данные не корректны" << endl;
-		return false;
-	}
-	return true;
 }
 
 bool IsPosibleTransformationAdd(cs& new_cs)
@@ -57,19 +46,6 @@ bool IsPosibleTransformationSub(cs& new_cs)
 	}
 }
 
-template <typename T>
-T GetCorrectNumber(T min, T max)
-{
-	T x;
-	while ((cin >> x).fail() || x > max || x < min)
-	{
-		cout << "Введенные данные не корректны\n";
-		cin.clear();
-		cin.ignore(1000, '\n');
-	}
-	return x;
-}
-
 tube& SelectTube(unordered_map <int, tube>& tubes)
 {
 	cout << "Введите номер трубы:" << endl;
@@ -95,6 +71,7 @@ bool CheckByName(T object, string param)
 
 bool CheckByRooms(cs new_cs, double percent)
 {
+	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	return (1 - new_cs.active_rooms/new_cs.rooms)*100 >= percent;
 }
 
@@ -241,32 +218,14 @@ void ChangeCsParameter(vector<int> v, unordered_map <int, cs>& stations)
 void CreateTube(unordered_map <int, tube>& tubes)
 {
 	tube new_tube;
-	cout << "Введите название: ";
-	getline(cin >> ws, new_tube.name);
-	cout << "Введите длину в метрах (используйте <.>): ";
-	/*new_tube.length = UserInputParameter();*/
-	new_tube.length = GetCorrectNumber<double>(1, 100000);
-	cout << "Введите диаметр в метрах (используйте <.>): ";
-	new_tube.diameter = GetCorrectNumber<double>(1, 100000);;
-	cout << "Труба исправна\n\n";
-	new_tube.condition = 1;
+	cin >> new_tube;
 	tubes.emplace(new_tube.id, new_tube);
 }
 
 void CreateStation(unordered_map <int, cs>& stations)
 {
 	cs new_cs;
-	cout << "Введите название: ";
-	getline(cin >> ws, new_cs.name);
-	cout << "Укажите количество цехов: ";
-	/*new_cs.rooms = InputRooms();*/
-	new_cs.rooms = GetCorrectNumber<int>(1, 10000);
-	cout << "Укажите количество работающих цехов: ";
-	//new_cs.active_rooms = InputActiveRooms(new_cs);
-	new_cs.active_rooms = GetCorrectNumber<int>(0, new_cs.rooms);
-	cout << "Введите значение эффективности (от 1 до 5): ";
-	/*new_cs.efficiency = InputEfficiency();*/
-	new_cs.efficiency = GetCorrectNumber<int>(1, 5);
+	cin << new_cs;
 	stations.emplace(new_cs.id, new_cs);
 }
 
@@ -294,100 +253,142 @@ void ViewAllObjects(unordered_map <int, tube> tubes, unordered_map <int, cs> sta
 
 void EditTubes(unordered_map <int, tube>& tubes, vector<int> id_of_tubes)
 {
-	cout << "------------ Редактирование Труб ------------\n";
-	cout << "Выберите 1, если хотите редактировать трубы из фильтра" << endl
-		<< "          2, если хотите редактировать трубы среди всех созданных" << endl;
-	if (GetCorrectNumber(1, 2) == 1)
+	if (tubes.empty())
 	{
-		SetStatus(tubes, id_of_tubes);
+		cout << "Трубы еще не созданы\n";
 	}
 	else
 	{
-		int id;
-		vector<int> indexes_of_tubes;
-		while (true)
+		cout << "------------ Редактирование Труб ------------\n";
+		cout << "Выберите 1, если хотите редактировать трубы из фильтра" << endl
+			<< "          2, если хотите редактировать трубы среди всех созданных" << endl;
+		if (GetCorrectNumber(1, 2) == 1)
 		{
-			cout << "Введите номер трубы, которую вы хотите добавить в редактирование: " << endl
-				<< "Для прекращения ввода, введите 0" << endl;
-			cin >> id;
-			if (id == 0)
-			{
-				break;
-			}
-			if (tubes.find(id) != tubes.end() and find(indexes_of_tubes.begin(), indexes_of_tubes.end(), id) == indexes_of_tubes.end())
-			{
-				indexes_of_tubes.push_back(id);
-				continue;
-			}
+			SetStatus(tubes, id_of_tubes);
 		}
-		SetStatus(tubes, indexes_of_tubes);
+		else
+		{
+			int id;
+			vector<int> indexes_of_tubes;
+			while (true)
+			{
+				cout << "Введите номер трубы, которую вы хотите добавить в редактирование: " << endl
+					<< "Для прекращения ввода, введите 0" << endl;
+				cin >> id;
+				if (id == 0)
+				{
+					break;
+				}
+				if (tubes.find(id) != tubes.end() and find(indexes_of_tubes.begin(), indexes_of_tubes.end(), id) == indexes_of_tubes.end())
+				{
+					indexes_of_tubes.push_back(id);
+					continue;
+				}
+			}
+			SetStatus(tubes, indexes_of_tubes);
+		}
 	}
 }
 
 void EditStations(unordered_map <int, cs>& stations, vector<int> id_of_stations)
 {
-	cout << "------------ Редактирование КС ------------\n";
-	cout << "Выберите 1, если хотите редактировать КС из фильтра" << endl
-		<< "          2, если хотите редактировать КС среди всех созданных" << endl;
-	if (GetCorrectNumber(1, 2) == 1)
+	if (stations.empty())
 	{
-		ChangeCsParameter(id_of_stations, stations);
+		cout << "КС еще не созданы\n";
 	}
 	else
 	{
-		int id;
-		vector<int> indexes_of_stations;
-		while (true)
+		cout << "------------ Редактирование КС ------------\n";
+		cout << "Выберите 1, если хотите редактировать КС из фильтра" << endl
+			<< "          2, если хотите редактировать КС среди всех созданных" << endl;
+		if (GetCorrectNumber(1, 2) == 1)
 		{
-			cout << "Введите номер КС, которую вы хотите добавить в редактирование: " << endl
-				<< "Для прекращения ввода, введите 0" << endl;
-			cin >> id;
-			if (id == 0)
-			{
-				break;
-			}
-			if (stations.find(id) != stations.end() and find(indexes_of_stations.begin(), indexes_of_stations.end(), id) == indexes_of_stations.end())
-			{
-				indexes_of_stations.push_back(id);
-				continue;
-			}
+			ChangeCsParameter(id_of_stations, stations);
 		}
-		ChangeCsParameter(indexes_of_stations, stations);
+		else
+		{
+			int id;
+			vector<int> indexes_of_stations;
+			while (true)
+			{
+				cout << "Введите номер КС, которую вы хотите добавить в редактирование: " << endl
+					<< "Для прекращения ввода, введите 0" << endl;
+				cin >> id;
+				if (id == 0)
+				{
+					break;
+				}
+				if (stations.find(id) != stations.end() and find(indexes_of_stations.begin(), indexes_of_stations.end(), id) == indexes_of_stations.end())
+				{
+					indexes_of_stations.push_back(id);
+					continue;
+				}
+			}
+			ChangeCsParameter(indexes_of_stations, stations);
+		}
 	}
 }
 
-//void EditStation(cs& new_cs)
-//{
-//	if (new_cs.rooms == 0)
-//	{
-//		cout << "КС еще не создана\n";
-//	}
-//	else
-//	{
-//		cout << "------------ Редактирование КС ------------\n";
-//		cout << "Количество работающих цехов на данный момент: " << new_cs.active_rooms << endl;
-//		cout << "<0> - Убрать активный цех, <1> - Добавить активный цех\n";
-//		switch (GetCorrectNumber<int>(0, 1))
-//		{
-//		case 1:
-//			if (IsPosibleTransformationAdd(new_cs))
-//			{
-//				new_cs.active_rooms++;
-//				cout << "Кол-во работающих цехов: " << new_cs.active_rooms << endl;
-//			}
-//			break;
-//		case 0:
-//			if (IsPosibleTransformationSub(new_cs))
-//			{
-//				new_cs.active_rooms--;
-//				cout << "Кол-во работающих цехов: " << new_cs.active_rooms << endl;
-//			}
-//			break;
-//		default:
-//			break;
-//		}
-//	}
-//}
+void FindTubesByName(unordered_map <int, tube>& tubes, vector<int>& id_of_tubes)
+{
+	string name_of_object;
+	if (tubes.empty())
+	{
+		cout << "Трубы еще не созданы\n";
+	}
+	else
+	{
+		cout << "Введите название: ";
+		getline(cin >> ws, name_of_object);
+		id_of_tubes = FindTubesByFilter(tubes, CheckByName, name_of_object);
+		OutputObjects(id_of_tubes, tubes);
+	}
+}
+
+void FindTubesByStatus(unordered_map <int, tube>& tubes, vector<int>& id_of_tubes)
+{
+	if (tubes.empty())
+	{
+		cout << "Трубы еще не созданы\n";
+	}
+	else
+	{
+		cout << "<0> - вывести трубы, которые в ремонте" << endl
+			<< "<1> - вывести исправные трубы" << endl;
+		id_of_tubes = FindTubesByFilter(tubes, CheckByStatus, GetCorrectNumber<int>(0, 1));
+		OutputObjects(id_of_tubes, tubes);
+	}
+}
+
+void FindCsByName(unordered_map <int, cs>& stations, vector<int>& id_of_stations)
+{
+	string name_of_object;
+	if (stations.empty())
+	{
+		cout << "КС еще не созданы\n";
+	}
+	else
+	{
+		cout << "Введите название: ";
+		getline(cin >> ws, name_of_object);
+		id_of_stations = FindCsByFilter(stations, CheckByName, name_of_object);
+		OutputObjects(id_of_stations, stations);
+	}
+}
+
+void FindCsByRooms(unordered_map <int, cs>& stations, vector<int>& id_of_stations)
+{
+	if (stations.empty())
+	{
+		cout << "КС еще не созданы\n";
+	}
+	else
+	{
+		cout << "Введите процент: ";
+		id_of_stations = FindCsByFilter(stations, CheckByRooms, GetCorrectNumber<double>(0, 100));
+		OutputObjects(id_of_stations, stations);
+	}
+}
 
 void Save(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations)
 {
@@ -476,9 +477,9 @@ void Download(unordered_map <int, tube>& tubes, unordered_map <int, cs>& station
 			in >> new_cs.efficiency;
 			stations.emplace(new_cs.id, new_cs);
 		}
+		cout << "Данные загружены\n";
 	}
 	in.close();
-	cout << "Данные загружены\n";
 }
 
 void ShowMenu()
@@ -498,76 +499,137 @@ void ShowMenu()
 	cout << "0. Выход\n";
 }
 
-int Menu(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations, vector<int>& id_of_stations, vector<int>& id_of_tubes)
+//int Run(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations, vector<int>& id_of_stations, vector<int>& id_of_tubes)
+//{
+//	string name_of_object;
+//	int user_choice = GetCorrectNumber<int>(0, 12);
+//	switch (user_choice)
+//	{
+//	case 1:
+//		CreateTube(tubes);
+//		return 1;
+//	case 2:
+//		CreateStation(stations);
+//		return 1;
+//	case 3:
+//		cout << "Введите номер трубы, которую хотите удалить: ";
+//		tubes.erase(GetCorrectNumber<int>(0, 100000));
+//		return 1;
+//	case 4:
+//		ViewAllObjects(tubes, stations);
+//		return 1;
+//	case 5:
+//		EditTubes(tubes, id_of_tubes);
+//		return 1;
+//	case 6:
+//		EditStations(stations, id_of_stations);
+//		/*EditStation(SelectCS(stations));*/
+//		return 1;
+//	case 7:
+//		cout << "Введите название: ";
+//		getline(cin >> ws, name_of_object);
+//		id_of_stations = FindCsByFilter(stations, CheckByName, name_of_object);
+//		OutputObjects(id_of_stations, stations);
+//		return 1;
+//	case 8:
+//		cout << "Введите процент: ";
+//		id_of_stations = FindCsByFilter(stations, CheckByRooms, GetCorrectNumber<double>(0, 100));
+//		OutputObjects(id_of_stations, stations);
+//		return 1;
+//	case 9:
+//		cout << "Введите название: ";
+//		getline(cin >> ws, name_of_object);
+//		id_of_tubes = FindTubesByFilter(tubes, CheckByName, name_of_object);
+//		OutputObjects(id_of_tubes, tubes);
+//		return 1;
+//	case 10:
+//		cout << "<0> - вывести трубы, которые в ремонте" << endl
+//			<< "<1> - вывести исправные трубы" << endl;
+//		id_of_tubes = FindTubesByFilter(tubes, CheckByStatus, GetCorrectNumber<int>(0, 1));
+//		OutputObjects(id_of_tubes, tubes);
+//		return 1;
+//	case 11:
+//		Save(tubes, stations);
+//		return 1;
+//	case 12:
+//		Download(tubes, stations);
+//		return 1;
+//	case 0:
+//		return 0;
+//	default:
+//		cout << "Введенные данные не корректны. Пожалуйста, укажите номер интересующего вас пункта.\n\n";
+//		return 1;
+//	}
+//}
+
+void Run()
 {
-	string name_of_object;
-	int user_choice;
-	do { cin >> user_choice; } while (IsCorrectMenuChoice(user_choice) == false);
-	switch (user_choice)
+	vector<int> id_of_stations;
+	vector<int> id_of_tubes;
+	unordered_map <int, tube> tubes;
+	unordered_map <int, cs> stations;
+	while (true)
 	{
-	case 1:
-		CreateTube(tubes);
-		return 1;
-	case 2:
-		CreateStation(stations);
-		return 1;
-	case 3:
-		cout << "Введите номер трубы, которую хотите удалить: ";
-		tubes.erase(GetCorrectNumber<int>(0, 100000));
-		return 1;
-	case 4:
-		ViewAllObjects(tubes, stations);
-		return 1;
-	case 5:
-		EditTubes(tubes, id_of_tubes);
-		return 1;
-	case 6:
-		EditStations(stations, id_of_stations);
-		/*EditStation(SelectCS(stations));*/
-		return 1;
-	case 7:
-		cout << "Введите название: ";
-		getline(cin >> ws, name_of_object);
-		id_of_stations = FindCsByFilter(stations, CheckByName, name_of_object);
-		OutputObjects(id_of_stations, stations);
-		return 1;
-	case 8:
-		cout << "Введите процент: ";
-		id_of_stations = FindCsByFilter(stations, CheckByRooms, GetCorrectNumber<double>(0, 100));
-		OutputObjects(id_of_stations, stations);
-		return 1;
-	case 9:
-		cout << "Введите название: ";
-		getline(cin >> ws, name_of_object);
-		id_of_tubes = FindTubesByFilter(tubes, CheckByName, name_of_object);
-		OutputObjects(id_of_tubes, tubes);
-		return 1;
-	case 10:
-		cout << "<0> - вывести трубы, которые в ремонте" << endl
-			<< "<1> - вывести исправные трубы" << endl;
-		id_of_tubes = FindTubesByFilter(tubes, CheckByStatus, GetCorrectNumber<int>(0, 1));
-		OutputObjects(id_of_tubes, tubes);
-		return 1;
-	case 11:
-		Save(tubes, stations);
-		return 1;
-	case 12:
-		Download(tubes, stations);
-		return 1;
-	case 0:
-		return 0;
-	default:
-		cout << "Введенные данные не корректны. Пожалуйста, укажите номер интересующего вас пункта.\n\n";
-		return 1;
+		ShowMenu();
+		switch (GetCorrectNumber<int>(0, 12))
+		{
+		case 1:
+			CreateTube(tubes);
+			break;
+		case 2:
+			CreateStation(stations);
+			break;
+		case 3:
+			cout << "Введите номер трубы, которую хотите удалить: ";
+			tubes.erase(GetCorrectNumber<int>(0, 100000));
+			break;
+		case 4:
+			ViewAllObjects(tubes, stations);
+			break;
+		case 5:
+			EditTubes(tubes, id_of_tubes);
+			break;
+		case 6:
+			EditStations(stations, id_of_stations);
+			break;
+		case 7:
+			FindCsByName(stations, id_of_stations);
+			break;
+		case 8:
+			FindCsByRooms(stations, id_of_stations);
+			break;
+		case 9:
+			FindTubesByName(tubes, id_of_tubes);
+			break;
+		case 10:
+			FindTubesByStatus(tubes, id_of_tubes);
+			break;
+		case 11:
+			Save(tubes, stations);
+			break;
+		case 12:
+			Download(tubes, stations);
+			break;
+		case 0:
+			exit(0);
+		default:
+			cout << "Введенные данные не корректны. Пожалуйста, укажите номер интересующего вас пункта.\n\n";
+			break;
+		}
 	}
 }
 
 int main()
 {
 	setlocale(0, "");
-	vector<int> id_of_stations;
-	vector<int> id_of_tubes;
-	unordered_map <int, tube> tubes;
-	unordered_map <int, cs> stations;
-	do { ShowMenu(); } while (Menu(tubes, stations, id_of_stations, id_of_tubes) != 0);
+	Run();
+	//vector<int> id_of_stations;
+	//vector<int> id_of_tubes;
+	//unordered_map <int, tube> tubes;
+	//unordered_map <int, cs> stations;
+	//do 
+	//{ 
+	//	ShowMenu(); 
+	//} 
+	//while (Run(tubes, stations, id_of_stations, id_of_tubes));
 }
