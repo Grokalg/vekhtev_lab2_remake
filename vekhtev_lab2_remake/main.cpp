@@ -72,7 +72,7 @@ bool CheckByName(T object, string param)
 bool CheckByRooms(cs new_cs, double percent)
 {
 	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	return (1 - new_cs.active_rooms/new_cs.rooms)*100 >= percent;
+	return (1 - static_cast<double>(new_cs.active_rooms) / new_cs.rooms) * 100 >= percent;
 }
 
 template <typename T>
@@ -384,7 +384,8 @@ void FindCsByRooms(unordered_map <int, cs>& stations, vector<int>& id_of_station
 	}
 	else
 	{
-		cout << "¬ведите процент: ";
+		cout << "Ётот фильтр найдет станции, у которых процент незадействованных цехов превышает значение, которое введете вы" << endl;
+		cout << "¬ведите процент: "; //процент незадействованных цехов будет привышать этот процент
 		id_of_stations = FindCsByFilter(stations, CheckByRooms, GetCorrectNumber<double>(0, 100));
 		OutputObjects(id_of_stations, stations);
 	}
