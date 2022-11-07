@@ -32,4 +32,24 @@ tube::tube()
 	id = max_id++;
 }
 
+int tube::GetId()
+{
+	return id;
+}
+
+void tube::SetId(int new_id)
+{
+	id = new_id;
+}
+
+int tube::GetMaxId()
+{
+	return max_id;
+}
+
+void tube::SetMaxId(int new_max_id)
+{
+	max_id = new_max_id;
+}
+
 

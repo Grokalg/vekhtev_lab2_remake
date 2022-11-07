@@ -14,7 +14,7 @@ void OutputArray(T mas)
 {
 	for (auto& element : mas)
 	{
-		cout << element.first << endl << element.second << endl;
+		cout << element.second << endl;
 	}
 }
 
@@ -219,7 +219,7 @@ void CreateTube(unordered_map <int, tube>& tubes)
 {
 	tube new_tube;
 	cin >> new_tube;
-	tubes.emplace(new_tube.id, new_tube);
+	tubes.emplace(new_tube.GetId(), new_tube);
 }
 
 void CreateStation(unordered_map <int, cs>& stations)
@@ -398,12 +398,12 @@ void Save(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations)
 	cout << "Введите название файла, в который нужно сохранить данные: ";
 	getline(cin >> ws, name_of_file);
 	ofstream out(name_of_file + ".txt");
-	new_tube.max_id = new_tube.max_id - 1;
+	new_tube.SetMaxId(new_tube.GetMaxId() - 1);
 	new_cs.max_id = new_cs.max_id - 1;
 	if (out.is_open())
 	{
 		out << tubes.size() << endl;
-		out << new_tube.max_id << endl;
+		out << new_tube.GetMaxId() << endl;
 		out << stations.size() << endl;
 		out << new_cs.max_id << endl;
 		if (tubes.empty())
@@ -414,7 +414,7 @@ void Save(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations)
 		{
 			for (auto& element : tubes)
 			{
-				out << element.second.id << endl;
+				out << element.second.GetId() << endl;
 				out << element.second.name << endl;
 				out << element.second.length << endl;
 				out << element.second.diameter << endl;
@@ -458,13 +458,15 @@ void Download(unordered_map <int, tube>& tubes, unordered_map <int, cs>& station
 		while (number_of_tubes--)
 		{
 			tube new_tube;
-			new_tube.max_id = tube_max_id;
-			in >> new_tube.id;
+			int id;
+			new_tube.SetMaxId(tube_max_id);
+			in >> id;
+			new_tube.SetId(id);
 			getline(in >> ws, new_tube.name);
 			in >> new_tube.length;
 			in >> new_tube.diameter;
 			in >> new_tube.condition;
-			tubes.emplace(new_tube.id, new_tube);
+			tubes.emplace(new_tube.GetId(), new_tube);
 		}
 		while (number_of_cs--)
 		{
@@ -487,15 +489,16 @@ void ShowMenu()
 	cout << "1. Добавить трубу\n";
 	cout << "2. Добавить КС\n";
 	cout << "3. Удалить трубу\n";
-	cout << "4. Просмотр всех объектов\n";
-	cout << "5. Редактирование труб\n";
-	cout << "6. Редактирование КС\n";
-	cout << "7. Поиск КС по названию\n";
-	cout << "8. Поиск КС по проценту незадействованных цехов\n";
-	cout << "9. Поиск труб по названию\n"; 
-	cout << "10. Поиск труб по признаку 'в ремонте'\n";
-	cout << "11. Сохранить\n";
-	cout << "12. Загрузить\n";
+	cout << "4. Удалить КС\n";
+	cout << "5. Просмотр всех объектов\n";
+	cout << "6. Редактирование труб\n";
+	cout << "7. Редактирование КС\n";
+	cout << "8. Поиск КС по названию\n";
+	cout << "9. Поиск КС по проценту незадействованных цехов\n";
+	cout << "10. Поиск труб по названию\n"; 
+	cout << "11. Поиск труб по признаку 'в ремонте'\n";
+	cout << "12. Сохранить\n";
+	cout << "13. Загрузить\n";
 	cout << "0. Выход\n";
 }
 
@@ -571,7 +574,7 @@ void Run()
 	while (true)
 	{
 		ShowMenu();
-		switch (GetCorrectNumber<int>(0, 12))
+		switch (GetCorrectNumber<int>(0, 13))
 		{
 		case 1:
 			CreateTube(tubes);
@@ -584,30 +587,34 @@ void Run()
 			tubes.erase(GetCorrectNumber<int>(0, 100000));
 			break;
 		case 4:
-			ViewAllObjects(tubes, stations);
+			cout << "Введите номер КС, которую хотите удалить: ";
+			stations.erase(GetCorrectNumber<int>(0, 100000));
 			break;
 		case 5:
-			EditTubes(tubes, id_of_tubes);
+			ViewAllObjects(tubes, stations);
 			break;
 		case 6:
-			EditStations(stations, id_of_stations);
+			EditTubes(tubes, id_of_tubes);
 			break;
 		case 7:
-			FindCsByName(stations, id_of_stations);
+			EditStations(stations, id_of_stations);
 			break;
 		case 8:
-			FindCsByRooms(stations, id_of_stations);
+			FindCsByName(stations, id_of_stations);
 			break;
 		case 9:
-			FindTubesByName(tubes, id_of_tubes);
+			FindCsByRooms(stations, id_of_stations);
 			break;
 		case 10:
-			FindTubesByStatus(tubes, id_of_tubes);
+			FindTubesByName(tubes, id_of_tubes);
 			break;
 		case 11:
-			Save(tubes, stations);
+			FindTubesByStatus(tubes, id_of_tubes);
 			break;
 		case 12:
+			Save(tubes, stations);
+			break;
+		case 13:
 			Download(tubes, stations);
 			break;
 		case 0:

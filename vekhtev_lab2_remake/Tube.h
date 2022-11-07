@@ -5,10 +5,10 @@
 
 class tube
 {
-public:
 	int id = 0;
-	std::string name;
 	static int max_id;
+public:
+	std::string name;
 	double length = 0;
 	double diameter = 0;
 	int condition = 0;
@@ -16,5 +16,10 @@ public:
 	tube();
 	friend std::ostream& operator << (std::ostream& out, const tube& new_tube);
 	friend std::istream& operator >> (std::istream& in, tube& new_tube);
+
+	int GetId();
+	void SetId(int new_id);
+	int GetMaxId();
+	void SetMaxId(int new_id);
 };
 
