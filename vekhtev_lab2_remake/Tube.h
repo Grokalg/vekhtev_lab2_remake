@@ -14,12 +14,14 @@ public:
 	int condition = 0;
 
 	tube();
+	//tube(const tube& t);
+	//~tube();
 	friend std::ostream& operator << (std::ostream& out, const tube& new_tube);
 	friend std::istream& operator >> (std::istream& in, tube& new_tube);
 
 	int GetId();
 	void SetId(int new_id);
-	int GetMaxId();
-	void SetMaxId(int new_id);
+	static int GetMaxId();
+	void SetMaxId(int new_max_id);
 };
 

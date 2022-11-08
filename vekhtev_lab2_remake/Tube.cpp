@@ -29,8 +29,20 @@ std::istream& operator >> (std::istream& in, tube& new_tube)
 
 tube::tube()
 {
+	cout << "tube::tube()";
 	id = max_id++;
 }
+
+//tube::tube(const tube& t)
+//{
+//	cout << "tube::tube(const tube& t)";
+//	t.max_id = max_id;
+//}
+//
+//tube::~tube()
+//{
+//	cout << "tube::~tube()";
+//}
 
 int tube::GetId()
 {

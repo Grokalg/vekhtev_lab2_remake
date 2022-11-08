@@ -4,9 +4,9 @@
 
 class cs
 {
+	static int max_id;
 public:
 	int id = 0;
-	static int max_id;
 	int rooms = 0;
 	std::string name;
 	int active_rooms = 0;
@@ -18,5 +18,7 @@ public:
 	//~cs();
 	friend std::ostream& operator << (std::ostream& out, const cs& new_cs);
 	friend std::istream& operator << (std::istream& in, cs& new_cs);
+	static int GetMaxId();
+	void SetMaxId(int new_max_id);
 };
 

@@ -33,6 +33,16 @@ cs::cs()
 	id = max_id++;
 }
 
+int cs::GetMaxId()
+{
+	return max_id;
+}
+
+void cs::SetMaxId(int new_max_id)
+{
+	max_id = new_max_id;
+}
+
 //int cs::GetId()
 //{
 //	return id;
