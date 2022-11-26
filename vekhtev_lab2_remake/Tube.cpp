@@ -18,9 +18,9 @@ std::istream& operator >> (std::istream& in, tube& new_tube)
 {
 	cout << "¬ведите название: ";
 	getline(in >> ws, new_tube.name);
-	cout << "¬ведите длину в метрах (используйте <.>): ";
+	cout << "¬ведите длину в м (используйте <.>): ";
 	new_tube.length = GetCorrectNumber<double>(1, 100000);
-	cout << "¬ведите диаметр в метрах (используйте <.>): ";
+	cout << "¬ведите диаметр в мм (используйте <.>): ";
 	new_tube.diameter = GetCorrectNumber<double>(1, 100000);;
 	cout << "“руба исправна\n\n";
 	new_tube.condition = 1;
@@ -29,7 +29,6 @@ std::istream& operator >> (std::istream& in, tube& new_tube)
 
 tube::tube()
 {
-	cout << "tube::tube()";
 	id = max_id++;
 }
 

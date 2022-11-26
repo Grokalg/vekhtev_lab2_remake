@@ -15,7 +15,7 @@ ostream& operator << (ostream& out, const cs& new_cs)
 	return out;
 }
 
-std::istream& operator << (std::istream& in, cs& new_cs)
+std::istream& operator >> (std::istream& in, cs& new_cs)
 {
 	cout << "¬ведите название: ";
 	getline(in >> ws, new_cs.name);

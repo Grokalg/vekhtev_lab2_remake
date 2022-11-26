@@ -233,7 +233,7 @@ void CreateTube(unordered_map <int, tube>& tubes)
 void CreateStation(unordered_map <int, cs>& stations)
 {
 	cs new_cs;
-	cin << new_cs;
+	cin >> new_cs;
 	stations.emplace(new_cs.id, new_cs);
 }
 
@@ -593,6 +593,44 @@ void Download(unordered_map <int, tube>& tubes, unordered_map <int, cs>& station
 	in.close();
 }
 
+void ShowGraph(unordered_map<int, vector<int>>& graph)
+{
+	for (auto& item : graph)
+	{
+		cout << item.first << " --> ";
+		for (int i : item.second)
+		{
+			cout << i << ", ";
+		}
+		cout << endl;
+	}
+}
+
+void EditGraph(unordered_map <int, tube>& tubes, unordered_map <int, cs>& stations, unordered_map<int, vector<int>>& graph)
+{
+	int id_in, id_out;
+	double diameter;
+	vector <int> connections;
+	cout << "Укажите id КС входа: " << endl;
+	cin >> id_in;
+	cout << "Укажите id КС выхода: " << endl;
+	cin >> id_out;
+	cout << "Укажите диаметр трубы: " << endl;
+	cin >> diameter;
+	if (graph.find(id_out) == graph.end())
+	{
+		connections.push_back(id_in);
+		graph.emplace(id_out, connections);
+	}
+	else
+	{
+		connections = graph[id_out];
+		connections.push_back(id_in);
+		graph[id_out] = connections;
+	}
+	ShowGraph(graph);
+}
+
 void ShowMenu()
 {
 	cout << "1. Добавить трубу\n";
@@ -604,6 +642,7 @@ void ShowMenu()
 	cout << "7. Редактирование КС\n";
 	cout << "8. Сохранить\n";
 	cout << "9. Загрузить\n";
+	cout << "10. Редактировать граф\n";
 	cout << "0. Выход\n";
 }
 
@@ -611,6 +650,7 @@ void Run()
 {
 	unordered_map <int, tube> tubes;
 	unordered_map <int, cs> stations;
+	unordered_map<int, vector<int>> graph;
 	while (true)
 	{
 		ShowMenu();
@@ -642,6 +682,9 @@ void Run()
 			break;
 		case 9:
 			Download(tubes, stations);
+			break;
+		case 10:
+			EditGraph(tubes, stations, graph);
 			break;
 		case 0:
 			exit(0);

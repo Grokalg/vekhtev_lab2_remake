@@ -17,7 +17,7 @@ public:
 	//void SetId(int index);
 	//~cs();
 	friend std::ostream& operator << (std::ostream& out, const cs& new_cs);
-	friend std::istream& operator << (std::istream& in, cs& new_cs);
+	friend std::istream& operator >> (std::istream& in, cs& new_cs);
 	static int GetMaxId();
 	void SetMaxId(int new_max_id);
 };
